@@ -1,7 +1,7 @@
 /* 
  * File:   main.cpp
  * Author: Cassandra Leon
- * Purpose: Convert meters and centimeters to feet and inches
+ * Purpose: Converts Length
  * Created on 05/03/17, 12:59 PM
  */
 

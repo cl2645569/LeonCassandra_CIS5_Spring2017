@@ -1,7 +1,7 @@
 /* 
  * File:   main.cpp
  * Author: Cassandra Leon
- * Purpose: Convert feet and inches to meters and centimeters
+ * Purpose: Converts weight
  * Created on 05/03/17, 12:59 PM
  */
 
