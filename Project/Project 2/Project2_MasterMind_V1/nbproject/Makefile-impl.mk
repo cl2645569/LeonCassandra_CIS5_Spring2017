@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=Project2_MasterMind_V1
+PROJECTNAME=p2
 
 # Active Configuration
 DEFAULTCONF=Debug

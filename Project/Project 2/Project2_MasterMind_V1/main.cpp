@@ -15,167 +15,146 @@ using namespace std;
 
 //declare void menu function
 void menu(void);
-void instr(void);
-        
+int score(int [],int);
+int game1();
         
 int main(int argc, char** argv) {
-        //Set the random number seed
-        srand(static_cast<unsigned int>(time(0)));  
-        
-        //File I/O
-     ifstream in;
-     ofstream out;
+ //Set the random number seed
+     srand(static_cast<unsigned int>(time(0)));  
      
-    //declare variable - what user inputs as choice
-    char choice; //what the user inputs for difficulty
-    int maxTurn;
-    //while loop to rerun program until user decides otherwise
-      while(!(choice=0)){  
-        //Output directions on how to play.
-        instr();
-    //Call the display menu function
-        menu();
-    //Declare variables, code and random int
-    
-    char colors[5]; 
-    int randomint = rand()%5+1; 
-    
-    //File I/O
-    in.open("mastermind.dat");
-    out.open("mastermind.dat");
-    
-    //Switch loop changing numbers to colors
-    for(int i=0;i<4;i++){
-    randomint = rand()%5+1;
-     switch(randomint){
-         case 1:
-                 colors[i] = 'r';//1 becomes Red
-                 break;
-         case 2:
-                 colors[i] = 'b';//2 becomes Blue
-                 break;
-         case 3:
-                 colors[i] = 'y';//3 becomes Yellow
-                 break;
-         case 4:
-                 colors[i] = 'p';//4 becomes Pink
-                 break;
-         case 5:
-                 colors[i] = 'g';//5 becomes Green
-                 break;
-            }
-    }
-        // Declare variables for actual game
-	char usrcolor[4]; //The color the user inputs
-        
-        //menu options
-    cin>>choice;
-    //If statement, determines difficulty
-    switch(choice){
-        case 1:{
-            maxTurn=15;
-        cout<<"You have chosen 'Easy', you will have 15 tries to solve the code."<<endl;
-        return maxTurn;
-        }
-        case 2:{
-            maxTurn=12;
-        cout<<"You have chosen 'Medium', you will have 12 tries to solve the code."<<endl;
-        return maxTurn;
-        }
-        case 3:{
-            maxTurn=8;
-        cout<<"You have chosen 'Hard', you will have 8 tries to solve the code."<<endl;
-        return maxTurn;
-        }
-    }
-     //While loop to count how many turns the player takes.
-        int trncnt = 0;
-        while(trncnt != maxTurn){
-            trncnt++;
-        //Tell the user how to input guess.
-            cout << "Current try: " << trncnt << endl;
-        //for loop for user to input guess for four colors
-            for(int i=0;i<4;i++){
-                    cout << "Color " << i << ": "; 
-                    cin >> usrcolor[i];
-            }
-        //for loop to output when color is correct and placement is correct
-            for(int i=0;i<4;i++){		
-                    if(usrcolor[i] == colors[i])
-                            cout << "R" << " ";
-            }
-        //if statements to determine if correct color
-            if(usrcolor[0] == colors[1] || 
-               usrcolor[0] == colors[2] ||
-               usrcolor[0] == colors[3] ){
-                       cout << "W" << " ";
-            }
-            if(usrcolor[1] == colors[0] ||
-               usrcolor[1] == colors[2] ||
-               usrcolor[1] == colors[3]){
-                               cout << "W" << " ";
-               }
-            if(usrcolor[2] == colors[0] ||
-               usrcolor[2] == colors[1] ||
-               usrcolor[2] == colors[3]){
-                       cout << "W" << " ";
-               }
-            if(usrcolor[3] == colors[0] ||
-               usrcolor[3] == colors[1] ||
-               usrcolor[3] == colors[2])
-                    {
-                            cout << "W" << " ";
-                    }
+//Declare Variables
+  int randomint = 100 + rand()%899;
+  int answer=randomint;     //Code to Break
+  int guess;                //User's guess
+  int tries;                //number of tries
+  int right;                //right answer
+  int dright, dmidd, dleft; //digits in guess
+  int aright, amidd, aleft; //digits in answer
+  int cNum;                 //correct number
+  int cPos;                 //correct position
+  int choice;
 
-            cout << endl << endl;
-            if(trncnt == 15){
-            cout << "You lost." << endl;
-    }
-            if(usrcolor[0] == colors[0] &&
-               usrcolor[1] == colors[1] &&
-               usrcolor[2] == colors[2] &&
-               usrcolor[3] == colors[3]){
-                    cout << "You win! Number of tries: " << trncnt << endl;
-                   
-    //Scoring 
-    //Declare variables for scoring
-    float score;
-    //Set score equal to equation
-    score=(1/(pow(trncnt,2))*50000);
-    //output score
-    cout<<fixed<<setprecision(0)<<showpoint<<endl;
-    cout<<"Your score is "<<score<<endl;
-    break;
+    //Separate integer into digits 
+  aright = answer % 10;
+  aleft = answer / 100;
+  amidd = (answer / 10) % 10;
+//initialize counter 
+  tries = 1;
+  right = 0;
+
     
+ //Output menu and options
+  menu();
+  cin>>choice;
+  switch(choice){
+      case 1: {
+             while (!right) {
+            cout << "Guess #" << tries << ": Enter a number between 100 and 999: ";
+            cout<<answer;
+            cin >> guess;
+          //check guess is valid
+            if (guess >= 100 && guess <= 999) {
+          //check if answer is right
+              if (guess == answer) {
+                cout << "Right!  You took " << tries<< " move";
+                if (tries != 1) cout << "s" ;
+                cout << "." << endl;
+                right = 1;
+              } else {
+          //separate guess into digits
+                dright = guess % 10;
+                dleft = guess / 100;
+                dmidd = (guess / 10) % 10;
+          //Position counter, how many in correct position
+                cPos = 0;
+                if (dright == aright) cPos++;
+                if (dleft == aleft) cPos++;
+                if (dmidd == amidd) cPos++;
+          //Number counter, how many correct numbers     
+                cNum = 0;
+                if (dright == aright || dright == amidd || dright == aleft) cNum++;
+                if (dmidd == aright || dmidd == amidd || dmidd == aleft) cNum++;
+                if (dleft == aright || dleft == amidd || dleft == aleft) cNum++;
+          //Output correct position and correct number
+                cout << "Correct position: " << cPos << endl;
+                cout << "Correct number:   " << cNum << endl;
+              }
+            } else {
+              cout << "Between 1 and 999, please."<<endl;
+            }
+            tries++;
+             }
+            break;
+              }
+      case 2:{
+                    while (!right) {
+            cout << "Guess #" << tries << ": Enter a number between 100 and 999: ";
+            cout<<answer;
+            cin >> guess;
+             int choice;
+                    //check guess is valid
+            if (guess >= 100 && guess <= 999) {
+          //check if answer is right
+              if (guess == answer) {
+                cout << "Right!  You took " << tries<< " move";
+                if (tries != 1) cout << "s" ;
+                cout << "." << endl;
+                right = 1;
+              } else {
+          //separate guess into digits
+                dright = guess % 10;
+                dleft = guess / 100;
+                dmidd = (guess / 10) % 10;
+                if(dright>aright){
+                    cout<<"Last digit too high."<<endl;
                 }
+                if(dmidd>amidd){
+                    cout<<"Second digit too high."<<endl;
+                }
+                if(dleft>aleft){
+                    cout<<"First digit too high."<<endl;
+                }
+                if(dright<aright){
+                    cout<<"Last digit too low."<<endl;
+                }
+                if(dmidd<amidd){
+                    cout<<"Second digit too low."<<endl;
+                }
+                if(dleft<aleft){
+                    cout<<"First digit too low."<<endl;
+                }
+              }
+            } else {
+              cout << "Between 1 and 999, please."<<endl;
             }
-        } 
-    
-  
-    
+            tries++;
+                    }
+            break;
+              }
+          }
+ 
 
-     //Exit
-    in.close();
-    out.close();
-        
-	return 0;
+  
+   
+  return 0;
 }
-void instr(void){
-    cout<<"          This is the game of Mastermind.                  "<<endl;
-    cout<<"  Your objective is to guess the randomly generated code.  "<<endl;
-    cout<<"  A set of colors will be made into a four part code.      "<<endl;
-    cout<<"A 'R' will output for a correct color in the correct place."<<endl;
-    cout<<" A 'W' will output for a correct color in the wrong place. "<<endl;
-    cout<<"       There are fives colors: r, b, y, p, g.              "<<endl;
-    cout<<"             Colors may be repeated.                       "<<endl;
-    cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<<endl;
+int game1(){
+    
 }
 void menu(void){
+    //Output directions on how to play.
+cout<<"          This is the game of Mastermind.                  "<<endl;
+cout<<"  Your objective is to guess the randomly generated code.  "<<endl;
+cout<<"  A set of colors will be made into a four part code.      "<<endl;
+cout<<"A 'R' will output for a correct color in the correct place."<<endl;
+cout<<" A 'W' will output for a correct color in the wrong place. "<<endl;
+cout<<"       There are fives colors: r, b, y, p, g.              "<<endl;
+cout<<"               Colors may be repeated.                     "<<endl;
+cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<<endl;
 //output menu
-    cout<<"          Choose a level of difficulty.    "<<endl;
-    cout<<"                  1 for Easy                "<<endl;
-    cout<<"                 2 for Medium               "<<endl;
-    cout<<"                  3 for Hard                "<<endl;
-    cout<<"                      or                     "<<endl;
-    cout<<"                  0 to exit                 "<<endl;
+cout<<"          Choose a level of difficulty.    "<<endl;
+cout<<"      1 for and easier version of the game. "<<endl;
+cout<<"            2 for the regular version       "<<endl;
+cout<<"                  Any key to exit            "<<endl;
+
 }
