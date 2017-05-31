@@ -11,12 +11,13 @@
 #include <cmath> // math function
 #include <iomanip> //setw function
 #include <fstream>  //File I/O
+#include <string>
 using namespace std;
 
 //declare void menu function
 void menu(void);
-int score(int,int);
-int game1();
+void game1(int,int,int,int,int,int,int,int,int,int,int);
+void game2(int,int,int,int,int,int,int,int,int,int,int);
 void win();
         
 int main(int argc, char** argv) {
@@ -30,72 +31,72 @@ int main(int argc, char** argv) {
     in.open("mastermind.dat");
     out.open("mastermind.dat");
 //Declare Variables
-  int randomint = 100 + rand()%899;
-  int answer=randomint;     //Code to Break
   int guess;                //User's guess
   int tries;                //number of tries
-  int right;                //right answer
   int dright, dmidd, dleft; //digits in guess
   int aright, amidd, aleft; //digits in answer
   int cNum;                 //correct number
   int cPos;                 //correct position
-  int choice;
+  int choice,choice2;
 
-    //Separate integer into digits 
-  aright = answer % 10;
-  aleft = answer / 100;
-  amidd = (answer / 10) % 10;
 //initialize counter 
   tries = 1;
-  right = 0;
-
-    
- //Output menu and options
+ 
+  //Begin time calculation
+  int beg=time(0);
+  
+  //do while loop to continue game if player wishes
+  do{
+      
+ //display menu and players chooses game
   menu();
   cin>>choice;
+  // Check if player wishes to leave program
+  if((!(choice==2))&&(!(choice==1))){
+      cout<<"Goodbye!"<<endl;
+      exit(choice);
+  }
+  //switch case to play each game
   switch(choice){
       case 1: {
-             while (!right) {
-            cout << "Guess #" << tries << ": Enter a number between 100 and 999: ";
-            cout<<answer;
-            cin >> guess;
-          //check guess is valid
-            if (guess >= 100 && guess <= 999) {
-          //check if answer is right
-              if (guess == answer) {
-                  win();
-                cout << "Right!  You took " << tries<< " move";
-                if (tries != 1) cout << "s" ;
-                cout << "." << endl;
-                right = 1;
-              } else {
-          //separate guess into digits
-                dright = guess % 10;
-                dleft = guess / 100;
-                dmidd = (guess / 10) % 10;
-          //Position counter, how many in correct position
-                cPos = 0;
-                if (dright == aright) cPos++;
-                if (dleft == aleft) cPos++;
-                if (dmidd == amidd) cPos++;
-          //Number counter, how many correct numbers     
-                cNum = 0;
-                if (dright == aright || dright == amidd || dright == aleft) cNum++;
-                if (dmidd == aright || dmidd == amidd || dmidd == aleft) cNum++;
-                if (dleft == aright || dleft == amidd || dleft == aleft) cNum++;
-          //Output correct position and correct number
-                cout << "Correct position: " << cPos << endl;
-                cout << "Correct number:   " << cNum << endl;
-              }
-            } else {
-              cout << "Between 1 and 999, please."<<endl;
-            }
-            tries++;
-             }
-            break;
+        int randint = 100 + rand()%899;
+        int answer=randint;     //Code to Break
+        //Separate integer into digits 
+        aright = answer % 10;
+        aleft = answer / 100;
+        amidd = (answer / 10) % 10;
+             game1(tries,guess,answer,dleft,dmidd,dright,
+             aleft,amidd,aright,cPos,cNum);
+          break;
               }
       case 2:{
-                    while (!right) {
+        int randint = 100 + rand()%899;
+        int answer=randint;     //Code to Break
+        //Separate integer into digits 
+        aright = answer % 10;
+        aleft = answer / 100;
+        amidd = (answer / 10) % 10;
+             game2(tries,guess,answer,dleft,dmidd,dright,
+             aleft,amidd,aright,cPos,cNum); 
+          break;
+              }
+          }
+  cout<<"To play again type 3."<<endl;
+  cin>>choice2;
+  }while(choice2==3);
+ int end=time(0);//End time of Game play
+cout<<"Total time played = "<<end-beg<<" seconds."<<endl;
+cout<<"Goodbye!"<<endl;
+
+//Close Files and Exit stage right!
+in.close();
+out.close();
+
+  return 0;
+}
+void game2(int tries,int guess,int answer,int dleft,int dmidd,
+        int dright,int aleft,int amidd,int aright,int cPos,int cNum){
+     while (!(guess == answer)) {
             cout << "Guess #" << tries << ": Enter a number between 100 and 999: ";
             cout<<answer;
             cin >> guess;
@@ -108,7 +109,6 @@ int main(int argc, char** argv) {
                 cout << "Right!  You took " << tries<< " move";
                 if (tries != 1) cout << "s" ;
                 cout << "." << endl;
-                right = 1;
               } else {
           //separate guess into digits
                 dright = guess % 10;
@@ -147,17 +147,53 @@ int main(int argc, char** argv) {
             }
             tries++;
                     }
-            break;
-              }
-          }
- 
-
-    //Close Files and Exit stage right!
-    in.close();
-    out.close();
-  return 0;
 }
-int score(){
+void game1(int tries,int guess,int answer,int dleft,int dmidd,
+        int dright,int aleft,int amidd,int aright,int cPos,int cNum){
+      while (!(guess == answer)) {
+            cout << "Guess #" << (int)tries << ": Enter a number between 100 and 999: ";
+            cout<<answer;
+            cin >> guess;
+          //check guess is valid
+            if (guess >= 100 && guess <= 999) {
+          //check if answer is right
+              if (guess == answer) {
+                  win();
+                cout << "Right!  You took " << tries<< " move";
+                if (tries != 1) cout << "s" ;
+                cout << "." << endl;
+              } else {
+          //separate guess into digits
+                dright = guess % 10;
+                dleft = guess / 100;
+                dmidd = (guess / 10) % 10;
+          //Position counter, how many in correct position
+                cPos = 0;
+                if (dright == aright) cPos++;
+                if (dleft == aleft) cPos++;
+                if (dmidd == amidd) cPos++;
+          //Number counter, how many correct numbers     
+                cNum = 0;
+                if (dright == aright || dright == amidd || dright == aleft) cNum++;
+                if (dmidd == aright || dmidd == amidd || dmidd == aleft) cNum++;
+                if (dleft == aright || dleft == amidd || dleft == aleft) cNum++;
+          //Output correct position and correct number
+                cout << "Correct position: " << cPos << endl;
+                cout << "Correct number:   " << cNum << endl;
+              }
+            } else {
+              cout << "Between 1 and 999, please."<<endl;
+            }
+            tries++;
+             }
+}
+void score(int scr[],int tries){
+    //Scoring 
+    //Set score equal to equation
+    scr[tries]=(1/(pow(tries,2))*5);
+    //output score
+    cout<<fixed<<setprecision(0)<<showpoint<<endl;
+    cout<<"Your score is "<<scr[tries]<<endl;
     
 }
 void win(){
