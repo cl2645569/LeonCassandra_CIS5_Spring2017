@@ -16,11 +16,14 @@ using namespace std;
 
 //declare void menu function
 void menu(void);
-void game1(int,int,int,int,int,int,int,int,int,int,int,int);
-void game2(int,int,int,int,int,int,int,int,int,int,int,int);
+int game1(int,int,int,int,int,int,int,int,int,int,int,int []);
+int game2(int,int,int,int,int,int,int,int,int,int,int,int []);
 void win();
 void rdFile();
-void wrtFile(int);
+void wrtFile(int [],int);
+void scrSort(int [],int);
+void prntSrt(int [], int, int);
+void filSort(int [],int);
         
 int main(int argc, char** argv) {
  //Set the random number seed
@@ -34,9 +37,11 @@ int main(int argc, char** argv) {
   int cNum;                 //correct number
   int cPos;                 //correct position
   int choice,choice2;
-  int score;
+  int score[]={};
+  const int SIZE=10;
+  int array[SIZE]={};
   
-  //initialize counter 
+  //initialize variables 
   tries=1;
  
   //Begin time calculation
@@ -64,6 +69,8 @@ int main(int argc, char** argv) {
         amidd = (answer / 10) % 10;
         game1(tries,guess,answer,dleft,dmidd,dright,
              aleft,amidd,aright,cPos,cNum,score);
+        rdFile();
+        wrtFile(score,tries);
           break;
               }
       case 2:{
@@ -73,8 +80,10 @@ int main(int argc, char** argv) {
         aright = answer % 10;
         aleft = answer / 100;
         amidd = (answer / 10) % 10;
-             game2(tries,guess,answer,dleft,dmidd,dright,
+        game2(tries,guess,answer,dleft,dmidd,dright,
              aleft,amidd,aright,cPos,cNum,score); 
+        rdFile();
+        wrtFile(score,tries);
           break;
               }
           }
@@ -85,16 +94,55 @@ int main(int argc, char** argv) {
   //End time of Game play,output time
  int end=time(0);
 cout<<"Total time played = "<<end-beg<<" seconds."<<endl;
+
+//High score
+cout<<endl;
+cout<<"  High Scores!"<<endl;
+cout<<"~~~~~~~~~~~~~~~~"<<endl;
+
+filSort(array,SIZE);
+//Map inputs to outputs or process the data
+scrSort(array,SIZE);
+ //Output the transformed data
+ prntSrt(array,SIZE,1);
 cout<<"Goodbye!"<<endl;
 
 return 0;
 }
-void wrtFile(int score){
+
+void filSort(int a[],int n){
+    for(int indx=0;indx<n;indx++){
+        a[indx]=3000+rand()%1999;//Fill with 2 digit number
+    }
+}
+
+void scrSort(int a[],int n){
+    for(int pos=0;pos<n-1;pos++){
+        for(int indx=pos+1;indx<n;indx++){
+            if(a[pos]>a[indx]){
+                int temp=a[pos];
+                    a[pos]=a[indx];
+                    a[indx]=temp;
+            }
+        }
+    }
+}
+
+void prntSrt(int a[],int n,int perLine){
+    for(int indx=0;indx<n;indx++){
+        cout<<setw(9)<<a[indx]<<" ";
+        if(indx%perLine==(perLine-1))cout<<endl;
+    }
+    cout<<endl;
+}
+
+void wrtFile(int score[],int tries){
     //Declare variables
     ofstream out;
     //Open the file
-    out.open("mastermind.dat");
-    out<<score<<endl;
+    char outName[]="mastermind.dat"; //Character Array Name
+    out.open(outName);              //Open the Output file
+    out<<score[tries]<<endl;
     //Close the file
     out.close();
 }
@@ -103,13 +151,14 @@ void rdFile(){
     //Declare variables
     ifstream in;
     //Open the file
-    in.open("mastermind.dat");
+    string inName="mastermind.dat";   //String Name
+    in.open(inName.c_str());        //Open the Input file
     //Close the file
     in.close();
 }
 
-void game2(int tries,int guess,int answer,int dleft,int dmidd,
-        int dright,int aleft,int amidd,int aright,int cPos,int cNum,int score){
+int game2(int tries,int guess,int answer,int dleft,int dmidd,int dright,int aleft,
+        int amidd,int aright,int cPos,int cNum,int score[]){
      while (!(guess == answer)) {
             cout << "Guess #" << tries << ": Enter a number between 100 and 999: ";
             cout<<answer;
@@ -163,16 +212,17 @@ void game2(int tries,int guess,int answer,int dleft,int dmidd,
         //output score
             if(guess==answer){
             cout<<"Your score is:"<<endl;
-            score=5000*1/tries;
-            cout<<score<<endl;
+            score[tries]=5000*1/tries;
+            cout<<score[tries]<<endl;
             }
+            
                     }
+     return tries;
 }
-void game1(int tries,int guess,int answer,int dleft,int dmidd,
-        int dright,int aleft,int amidd,int aright,int cPos,int cNum,int score){
+int game1(int tries,int guess,int answer,int dleft,int dmidd,
+        int dright,int aleft,int amidd,int aright,int cPos,int cNum,int score[]){
       while (!(guess == answer)) {
             cout << "Guess #" << (int)tries << ": Enter a number between 100 and 999: ";
-            cout<<answer;
             cin >> guess;
           //check guess is valid
             if (guess >= 100 && guess <= 999) {
@@ -208,10 +258,11 @@ void game1(int tries,int guess,int answer,int dleft,int dmidd,
         //output score
             if(guess==answer){
             cout<<"Your score is:"<<endl;
-            score=5000*1/tries;
-            cout<<score<<endl;
+            score[tries]=5000*1/tries;
+            cout<<score[tries]<<endl;
             }
              }
+      return tries;
 }
 
 void win(){
@@ -225,11 +276,10 @@ void menu(void){
     //Output directions on how to play.
 cout<<"          This is the game of Mastermind.                  "<<endl;
 cout<<"  Your objective is to guess the randomly generated code.  "<<endl;
-cout<<"  A set of colors will be made into a four part code.      "<<endl;
-cout<<"A 'R' will output for a correct color in the correct place."<<endl;
-cout<<" A 'W' will output for a correct color in the wrong place. "<<endl;
-cout<<"       There are fives colors: r, b, y, p, g.              "<<endl;
-cout<<"               Colors may be repeated.                     "<<endl;
+cout<<"      The regular version will tell you if the numbers     "<<endl;
+cout<<"  are in the correct position and are the right number.    "<<endl;
+cout<<"The easier version will tell you if each digit is too high "<<endl;
+cout<<"                    or too low.                             "<<endl;
 cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<<endl;
 //output menu
 cout<<"          Choose a level of difficulty.    "<<endl;
@@ -238,4 +288,3 @@ cout<<"       2 for an easier version of the game   "<<endl;
 cout<<"                  Any key to exit            "<<endl;
 
 }
-
